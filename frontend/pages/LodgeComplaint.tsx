@@ -2,6 +2,7 @@ import React, { useState, useRef } from 'react';
 import { Mic, Square, Image as ImageIcon, UploadCloud, AlertCircle } from 'lucide-react';
 import { saveComplaint } from '../services/storageService';
 import { predictPriority } from '../services/geminiService';
+import { lodgeComplaint as submitComplaintToBackend } from '../services/api';
 import { useNavigate } from 'react-router-dom';
 
 const DEPARTMENTS = [
@@ -81,26 +82,12 @@ const LodgeComplaint: React.FC = () => {
       }
 
       // 2. Send to Backend API (for email notifications)
-      const backendResponse = await fetch('http://localhost:4000/api/complaints', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          name: formData.fullName,
-          email: formData.email,
-          subject: formData.title,
-          description: formData.description
-        })
+      const backendResponse = await submitComplaintToBackend({
+        name: formData.fullName,
+        email: formData.email,
+        subject: formData.title,
+        description: formData.description
       });
-
-      if (!backendResponse.ok) {
-        const errorData = await backendResponse.json();
-        console.error('Backend error:', errorData);
-        throw new Error(errorData.error || 'Failed to submit complaint to backend');
-      }
-
-      const backendComplaint = await backendResponse.json();
-      console.log('✅ Complaint sent to backend:', backendComplaint);
-      console.log('📧 Email sent:', backendComplaint.emailSent);
 
       // 3. Process Files (Convert to Base64 mock)
       let voiceUrl = '';

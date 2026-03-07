@@ -1,11 +1,43 @@
 import { GoogleGenAI } from "@google/genai";
 import { Priority } from "../types";
+import { getGeminiApiKey } from "./config";
 
-// Initialize Gemini Client
-// NOTE: In a real production app, this should be proxied through a backend to hide the key.
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+/**
+ * Initialize Gemini Client
+ * 
+ * ⚠️ SECURITY NOTE:
+ * The API key is exposed in frontend code. For production:
+ * - Consider implementing a backend API proxy
+ * - Set usage limits and monitoring on the API key
+ * - Use a rate limiting service
+ */
+let ai: GoogleGenAI | null = null;
+
+const initializeAI = (): GoogleGenAI | null => {
+  if (ai) return ai;
+  
+  const apiKey = getGeminiApiKey();
+  if (!apiKey) {
+    console.warn('⚠️ Gemini API Key not configured. AI features will be disabled.');
+    return null;
+  }
+  
+  try {
+    ai = new GoogleGenAI({ apiKey });
+    return ai;
+  } catch (error) {
+    console.error('❌ Failed to initialize Gemini AI:', error);
+    return null;
+  }
+};
 
 export const predictPriority = async (title: string, description: string, department: string): Promise<Priority> => {
+  const aiClient = initializeAI();
+  
+  if (!aiClient) {
+    return keywordBasedPriority(title, description);
+  }
+
   try {
     const prompt = `
       Analyze the following grievance complaint and assign a priority level: "High" or "Low".
@@ -26,7 +58,7 @@ export const predictPriority = async (title: string, description: string, depart
       Respond ONLY with the word "High" or "Low".
     `;
 
-    const response = await ai.models.generateContent({
+    const response = await aiClient.models.generateContent({
       model: 'gemini-2.5-flash',
       contents: prompt,
     });
@@ -39,20 +71,33 @@ export const predictPriority = async (title: string, description: string, depart
     return Priority.LOW;
 
   } catch (error) {
-    console.error("Gemini Priority Prediction Failed:", error);
-    // Fallback logic
-    const urgentKeywords = ['danger', 'fire', 'blood', 'accident', 'death', 'emergency', 'shock', 'harassment'];
-    const combinedText = (title + description).toLowerCase();
-    if (urgentKeywords.some(kw => combinedText.includes(kw))) {
-      return Priority.HIGH;
-    }
-    return Priority.LOW;
+    console.warn('⚠️ Gemini Priority Prediction Failed, using keyword fallback:', error);
+    return keywordBasedPriority(title, description);
   }
 };
 
+const keywordBasedPriority = (title: string, description: string): Priority => {
+  const urgentKeywords = [
+    'danger', 'fire', 'blood', 'accident', 'death', 'emergency',
+    'shock', 'harassment', 'violence', 'assault', 'structural',
+    'collapse', 'flood', 'electrical', 'child', 'elderly'
+  ];
+  const combinedText = (title + ' ' + description).toLowerCase();
+  if (urgentKeywords.some(kw => combinedText.includes(kw))) {
+    return Priority.HIGH;
+  }
+  return Priority.LOW;
+};
+
 export const chatWithBot = async (history: {role: 'user' | 'model', parts: string}[], message: string): Promise<string> => {
+  const aiClient = initializeAI();
+  
+  if (!aiClient) {
+    return 'AI features are currently unavailable. Please try again later or contact support.';
+  }
+
   try {
-    const chat = ai.chats.create({
+    const chat = aiClient.chats.create({
       model: 'gemini-2.5-flash',
       config: {
         systemInstruction: `You are the helpful AI assistant for the "Grievance Redressal Portal". 
@@ -82,7 +127,7 @@ export const chatWithBot = async (history: {role: 'user' | 'model', parts: strin
     const result = await chat.sendMessage({ message });
     return result.text || "I'm sorry, I didn't catch that. Could you please rephrase?";
   } catch (error) {
-    console.error("Gemini Chat Failed:", error);
-    return "I am currently experiencing technical difficulties. Please try again later.";
+    console.error('❌ Gemini Chat Failed:', error);
+    return 'I am currently experiencing technical difficulties. Please try again later.';
   }
 };
