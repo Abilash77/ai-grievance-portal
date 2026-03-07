@@ -37,7 +37,32 @@ transporter.verify((error, success) => {
 
 const sendComplaintAcknowledgment = async (complaintData) => {
   const { email, name, subject, _id } = complaintData;
-  // ...existing code for sending email...
+
+  if (!email) {
+    console.warn('⚠️  No recipient email address provided for complaint', _id);
+    return { success: false, error: 'no recipient' };
+  }
+
+  // build a simple acknowledgement message
+  const mailOptions = {
+    from: process.env.EMAIL_USER,
+    to: email,
+    subject: `Complaint received: ${subject}`,
+    text: `Hello ${name},\n\n` +
+          `We have received your complaint (ID: ${_id}).\n` +
+          `Our team will review it and get back to you as soon as possible.\n\n` +
+          `Thank you for using the AI Grievance Portal.\n` +
+          `— The Support Team`
+  };
+
+  try {
+    const info = await transporter.sendMail(mailOptions);
+    console.log('📨 Acknowledgement email sent to', email, 'id=', info.messageId);
+    return { success: true, messageId: info.messageId };
+  } catch (err) {
+    console.error('❌ Failed to send acknowledgement email:', err.message);
+    return { success: false, error: err.message };
+  }
 };
 
 module.exports = { sendComplaintAcknowledgment };

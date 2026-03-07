@@ -32,7 +32,12 @@ mongoose.connect(mongoUri, {
 const complaintsRouter = require('./routes/complaints');
 app.use('/api/complaints', complaintsRouter);
 
-const port = process.env.PORT || 4000;
-app.listen(port, () => {
-	console.log(`Server listening on port ${port}`);
-});
+// start the server only when the file is executed directly (not when imported by a serverless wrapper)
+if (require.main === module) {
+  const port = process.env.PORT || 4000;
+  app.listen(port, () => {
+    console.log(`Server listening on port ${port}`);
+  });
+}
+
+module.exports = app;
