@@ -29,22 +29,10 @@ const getAllowedOrigins = () => {
  * Note: credentials: true requires specific origins (not '*')
  */
 const getCorsOptions = () => {
-  const allowedOrigins = getAllowedOrigins();
-  
   return {
     origin: (origin, callback) => {
-      // Allow requests with no origin (like mobile apps or server requests)
-      if (!origin) {
-        return callback(null, true);
-      }
-      
-      // Check if origin is in allowed list
-      if (allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        console.warn(`⚠️  CORS rejected origin: ${origin}`);
-        callback(new Error('CORS not allowed for this origin'));
-      }
+      // Allow all origins
+      callback(null, true);
     },
     methods: ['GET', 'POST', 'PATCH', 'DELETE', 'OPTIONS'],
     credentials: true,
