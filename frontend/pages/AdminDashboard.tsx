@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getComplaints, updateComplaintStatus, forwardComplaint } from '../services/storageService';
+import { getApiBaseUrl } from '../services/config';
 import { Complaint, ComplaintStatus, Priority } from '../types';
 import { PieChart, Pie, Cell, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, Legend } from 'recharts';
 import { Search, Filter, AlertTriangle, Check, ExternalLink, Mic, Image as ImageIcon, Send, Clock, UserCheck } from 'lucide-react';
@@ -70,6 +71,8 @@ const AdminDashboard: React.FC = () => {
   const handleUpdateStatus = async (newStatus: ComplaintStatus) => {
     if (!selectedComplaint) return;
     
+    const API_BASE = getApiBaseUrl();
+    
     // Update local storage
     const updated = updateComplaintStatus(selectedComplaint.id, newStatus, remarkInput);
     if (updated) {
@@ -78,7 +81,7 @@ const AdminDashboard: React.FC = () => {
 
       // Send status update to backend (for email notification)
       try {
-        const response = await fetch(`http://localhost:4000/api/complaints/${selectedComplaint.id}`, {
+        const response = await fetch(`${API_BASE}/api/complaints/${selectedComplaint.id}`, {
           method: 'PATCH',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ status: newStatus })
@@ -101,6 +104,9 @@ const AdminDashboard: React.FC = () => {
 
   const handleForward = async () => {
     if (!selectedComplaint) return;
+    
+    const API_BASE = getApiBaseUrl();
+    
     const updated = forwardComplaint(selectedComplaint.id, remarkInput);
     if (updated) {
       setComplaints(getComplaints()); // Refresh
@@ -108,7 +114,7 @@ const AdminDashboard: React.FC = () => {
 
       // Send status update to backend (for email notification)
       try {
-        const response = await fetch(`http://localhost:4000/api/complaints/${selectedComplaint.id}`, {
+        const response = await fetch(`${API_BASE}/api/complaints/${selectedComplaint.id}`, {
           method: 'PATCH',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ status: 'forwarded' })

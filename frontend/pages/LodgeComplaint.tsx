@@ -113,7 +113,7 @@ const LodgeComplaint: React.FC = () => {
         userId: 'guest', // Demo user
       });
 
-      setSubmitResult({ id: backendComplaint._id || complaint.id, priority: complaint.priority });
+      setSubmitResult({ id: backendResponse._id || complaint.id, priority: complaint.priority });
     } catch (error) {
       console.error('Error:', error);
       alert("Error submitting complaint. Please try again. Check console for details.");
