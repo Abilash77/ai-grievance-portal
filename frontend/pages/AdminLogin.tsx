@@ -70,8 +70,7 @@ const AdminLogin: React.FC = () => {
         </form>
         
         <div className="text-center text-xs text-slate-400">
-          <p>Demo Credentials:</p>
-          <p>User: admin@example.com | Pass: admin123</p>
+      
         </div>
       </div>
     </div>
