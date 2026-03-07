@@ -2,16 +2,16 @@ require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
+const { getCorsOptions } = require('./config/cors');
 
 const app = express();
 
-app.use(cors({
-	origin: '*',
-	methods: ['GET', 'POST', 'PATCH', 'DELETE'],
-	credentials: true
-}));
+// CORS Configuration with origin validation
+app.use(cors(getCorsOptions()));
 
-app.use(express.json());
+// Parse JSON with size limit
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ limit: '10mb', extended: true }));
 
 const mongoUri = process.env.MONGODB_URI;
 if (!mongoUri) {

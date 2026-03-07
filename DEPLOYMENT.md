@@ -22,12 +22,19 @@ Choose to:
 - `MONGODB_URI` = Your MongoDB connection string
 - `EMAIL_USER` = Your Gmail address
 - `EMAIL_PASSWORD` = 16-character App Password (from myaccount.google.com/apppasswords)
+- `ALLOWED_ORIGINS` = Your frontend URL(s)
+  - Format: `https://your-frontend.vercel.app`
+  - Multiple: `https://app1.com,https://app2.com` (comma-separated, no spaces)
 
 ```bash
 vercel --prod
 ```
 
 **Save the backend URL** (e.g., `https://ai-grievance-backend.vercel.app`)
+
+**⚠️ IMPORTANT: Do NOT add `PORT` to environment variables**
+- Vercel automatically provides PORT
+- You only need it locally in `.env`
 
 ---
 

@@ -94,3 +94,50 @@ If you prefer not to use Vercel, you can still host the backend on any Node serv
 After deployment the backend URL (e.g. `https://grievance-backend.vercel.app`) can be used by
 the frontend via the `VITE_API_URL` variable.
 
+## CORS (Cross-Origin Resource Sharing)
+
+The backend restricts API requests to specific frontend origins for security.
+
+### Local Development
+
+By default, requests from `http://localhost:3000` and `http://localhost:3001` are allowed.
+No configuration needed.
+
+### Production (Vercel)
+
+When you deploy to Vercel:
+
+1. **Add environment variable to backend project:**
+   - Go to **Settings → Environment Variables**
+   - Add `ALLOWED_ORIGINS`
+   - Value should be your frontend URL(s), comma-separated:
+     ```
+     https://your-frontend-domain.vercel.app,https://www.yourdomain.com
+     ```
+
+2. **Fix in frontend** – Make sure frontend `.env` has:
+   ```env
+   VITE_API_URL=https://your-backend-url.vercel.app
+   ```
+
+### Troubleshooting CORS Errors
+
+If you see `Error: CORS not allowed for this origin`:
+
+1. **Check the error message** – it shows what origin was rejected
+2. **Ensure frontend URL is in `ALLOWED_ORIGINS`**
+   - ✅ Correct: `https://app.vercel.app,https://www.example.com`
+   - ❌ Wrong: `localhost:3000` (must include full `http://localhost:3000` with protocol)
+3. **Redeploy backend** after changing `ALLOWED_ORIGINS`
+4. **Check browser DevTools** Network tab
+   - Look for `Access-Control-Allow-Origin` response header
+
+### PORT Environment Variable
+
+**Do we need `PORT` in Vercel?**
+
+- ✅ **Local development:** Yes, set `PORT=4000` in `.env`
+- ❌ **Vercel:** No, Vercel automatically provides `PORT` via environment
+  - Don't add `PORT` to Vercel Environment Variables
+  - The code reads `process.env.PORT` which Vercel sets automatically
+
