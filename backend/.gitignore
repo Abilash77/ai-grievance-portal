@@ -16,10 +16,13 @@ yarn-error.log*
 
 # system files
 .DS_Store
+Thumbs.db
 
 # editor
 .vscode/
 
-# build
+# build output (if any)
 dist/
+
+# Vercel settings
 .vercel
