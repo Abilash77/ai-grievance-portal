@@ -1,8 +1,19 @@
+/// <reference types="vite/client" />
+
 /**
  * Centralized Environment Configuration
  * This module provides a single source of truth for all environment variables
  * across the frontend application.
  */
+
+interface ImportMetaEnv {
+  readonly VITE_API_URL: string;
+  readonly VITE_GEMINI_API_KEY: string;
+}
+
+interface ImportMeta {
+  readonly env: ImportMetaEnv;
+}
 
 /**
  * Get the API base URL for backend communication
