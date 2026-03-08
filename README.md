@@ -1,5 +1,12 @@
 # Grievance Redressal Portal
 
+## 👥 Team
+
+**Team Name:** Dominator  
+**Team Lead:** Abilash Aruva
+**AI for Rural Innovation & Sustainable Systems**
+
+---
 ## 🚀 AI-Grievance-Redressal Portal
 
 GrievAI – Redressal Portal is a modern, full-stack grievance management system designed to streamline the process of submitting, tracking, and resolving grievances.  
