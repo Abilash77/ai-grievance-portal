@@ -4,7 +4,7 @@
 
 **Team Name:** Dominator  
 **Team Lead:** Abilash Aruva
-**AI for Rural Innovation & Sustainable Systems**
+**Challenges:** AI for Rural Innovation & Sustainable Systems
 
 ---
 ## 🚀 AI-Grievance-Redressal Portal
