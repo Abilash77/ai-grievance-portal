@@ -10,11 +10,10 @@ This project focuses on scalability, clarity, and real-world applicability, maki
 ---
 ## 🌐 Live Demo
 
-The application is deployed and publicly accessible.
-
 🔗 **Live Application:**  
 https://ai-grievance-portal.vercel.app/
 
+---
 ## 🌟 Key Features
 
 ### 🧑‍💼 Public Portal
