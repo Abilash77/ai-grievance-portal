@@ -4,6 +4,7 @@
 
 **Team Name:** Dominator  
 **Team Lead:** Abilash Aruva
+
 **AI for Rural Innovation & Sustainable Systems**
 
 ---
