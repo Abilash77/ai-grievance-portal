@@ -1,10 +1,5 @@
 # Grievance Redressal Portal
 
-## 👥 Team
-
-**Team Name:** Dominator  
-**Team Lead:** Abilash Aruva  
-**Challenge Track:** AI for Rural Innovation & Sustainable Systems
 
 ---
 ## 🚀 AI-Grievance-Redressal Portal
