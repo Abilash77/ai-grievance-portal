@@ -69,9 +69,7 @@ const AdminLogin: React.FC = () => {
           </div>
         </form>
         
-        <div className="text-center text-xs text-slate-400">
-      
-        </div>
+
       </div>
     </div>
   );

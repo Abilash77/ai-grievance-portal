@@ -140,7 +140,15 @@ const AdminDashboard: React.FC = () => {
       <div className="max-w-7xl mx-auto">
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-3xl font-bold text-slate-900">Admin Dashboard</h1>
-          <div className="text-sm text-slate-500">Welcome, Administrator</div>
+          <div className="flex items-center gap-4">
+            <div className="text-sm text-slate-500">Welcome, Administrator</div>
+            <button
+              onClick={() => { localStorage.removeItem('isAdminAuth'); navigate('/admin-login'); }}
+              className="text-xs px-3 py-1.5 bg-red-100 text-red-700 rounded-md hover:bg-red-200 font-medium transition-colors"
+            >
+              Logout
+            </button>
+          </div>
         </div>
 
         {/* Stats Cards */}

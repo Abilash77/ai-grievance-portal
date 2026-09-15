@@ -9,6 +9,7 @@
 interface ImportMetaEnv {
   readonly VITE_API_URL: string;
   readonly VITE_GEMINI_API_KEY: string;
+  readonly VITE_ELEVENLABS_AGENT_ID: string;
 }
 
 interface ImportMeta {
@@ -59,6 +60,22 @@ export const getGeminiApiKey = (): string | null => {
   }
   
   return key;
+};
+
+/**
+ * Get the ElevenLabs Conversational AI Agent ID
+ * Create an agent at: https://elevenlabs.io/app/conversational-ai
+ */
+export const getElevenLabsAgentId = (): string | null => {
+  const id = import.meta.env.VITE_ELEVENLABS_AGENT_ID;
+  if (!id) {
+    console.warn(
+      '⚠️ VITE_ELEVENLABS_AGENT_ID not set.\n' +
+      'Create an agent at https://elevenlabs.io/app/conversational-ai and add the ID to your .env file.'
+    );
+    return null;
+  }
+  return id;
 };
 
 /**

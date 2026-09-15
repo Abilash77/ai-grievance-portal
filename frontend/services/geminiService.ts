@@ -4,7 +4,7 @@ import { getGeminiApiKey } from "./config";
 
 /**
  * Initialize Gemini Client
- * 
+ *
  * ⚠️ SECURITY NOTE:
  * The API key is exposed in frontend code. For production:
  * - Consider implementing a backend API proxy
@@ -15,13 +15,13 @@ let ai: GoogleGenAI | null = null;
 
 const initializeAI = (): GoogleGenAI | null => {
   if (ai) return ai;
-  
+
   const apiKey = getGeminiApiKey();
   if (!apiKey) {
     console.warn('⚠️ Gemini API Key not configured. AI features will be disabled.');
     return null;
   }
-  
+
   try {
     ai = new GoogleGenAI({ apiKey });
     return ai;
@@ -33,7 +33,7 @@ const initializeAI = (): GoogleGenAI | null => {
 
 export const predictPriority = async (title: string, description: string, department: string): Promise<Priority> => {
   const aiClient = initializeAI();
-  
+
   if (!aiClient) {
     return keywordBasedPriority(title, description);
   }
@@ -64,7 +64,7 @@ export const predictPriority = async (title: string, description: string, depart
     });
 
     const text = response.text?.trim().toLowerCase();
-    
+
     if (text?.includes('high')) {
       return Priority.HIGH;
     }
@@ -91,7 +91,7 @@ const keywordBasedPriority = (title: string, description: string): Priority => {
 
 export const chatWithBot = async (history: {role: 'user' | 'model', parts: string}[], message: string): Promise<string> => {
   const aiClient = initializeAI();
-  
+
   if (!aiClient) {
     return 'AI features are currently unavailable. Please try again later or contact support.';
   }
@@ -129,5 +129,54 @@ export const chatWithBot = async (history: {role: 'user' | 'model', parts: strin
   } catch (error) {
     console.error('❌ Gemini Chat Failed:', error);
     return 'I am currently experiencing technical difficulties. Please try again later.';
+  }
+};
+
+/**
+ * AI Complaint Enhancer
+ * Transforms a short, rough complaint description into a detailed,
+ * professional, urgency-focused grievance statement using Gemini.
+ */
+export const enhanceComplaintDescription = async (
+  title: string,
+  description: string,
+  department: string,
+  category: string,
+): Promise<string> => {
+  const aiClient = initializeAI();
+  if (!aiClient) throw new Error('Gemini API key not configured.');
+
+  const prompt = `You are an expert in writing formal government grievance complaints for the JanSuvidha Grievance Redressal Portal.
+
+The citizen has provided a brief complaint below. Rewrite it as a detailed, professional, urgency-focused grievance description.
+
+Rules:
+- Keep the ORIGINAL MEANING and FACTS completely unchanged
+- Expand to 3-5 clear, formal sentences
+- Use language suitable for an official government complaint
+- Highlight the impact on daily life, safety, or public welfare where appropriate
+- Convey appropriate urgency without exaggerating
+- Do NOT add fictional details, names, or specific dates not provided by the user
+- Output ONLY the enhanced description as plain paragraph text — no bullet points, no headers, no labels
+
+Complaint Details:
+Department: ${department}
+Category: ${category}
+Title: ${title}
+Original Description: ${description}
+
+Enhanced Description:`;
+
+  try {
+    const response = await aiClient.models.generateContent({
+      model: 'gemini-2.5-flash',
+      contents: prompt,
+    });
+    const enhanced = response.text?.trim();
+    if (!enhanced) throw new Error('Empty response from Gemini');
+    return enhanced;
+  } catch (error) {
+    console.error('❌ Complaint Enhancement Failed:', error);
+    throw error;
   }
 };
