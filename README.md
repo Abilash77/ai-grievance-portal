@@ -174,20 +174,20 @@ flowchart TD
 
 ```mermaid
 flowchart LR
-    Frontend[React Frontend]
+    Frontend["React Frontend"]
 
-    Frontend -->|POST| C1[/api/complaints]
-    Frontend -->|GET| C2[/api/complaints]
-    Frontend -->|GET| C3[/api/complaints/:id]
-    Frontend -->|POST| F1[/api/complaints/detect-fake]
+    Frontend -->|POST| C1["/api/complaints"]
+    Frontend -->|GET| C2["/api/complaints"]
+    Frontend -->|GET| C3["/api/complaints/:id"]
+    Frontend -->|POST| F1["/api/complaints/detect-fake"]
 
-    C1 --> API[Express Backend]
+    C1 --> API["Express Backend"]
     C2 --> API
     C3 --> API
     F1 --> API
 
-    API --> M[(MongoDB)]
-    API --> G[Gemini API]
+    API --> M[("MongoDB")]
+    API --> G["Gemini API"]
 ```
 
 ---
